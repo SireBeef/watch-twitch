@@ -72,9 +72,15 @@ func getLiveFollowed(clientID, userAccessToken string, userID string) []list.Ite
 }
 
 func launchStream(name string) {
-	cmd := exec.Command("bash", "-c",
-		fmt.Sprintf(`streamlink --twitch-disable-ads -p mpv --player-args "--gpu-context=wayland --ontop" https://twitch.tv/%s best > /dev/null 2>&1 &`, name),
-	)
+	command := fmt.Sprintf(`streamlink --twitch-disable-ads -p mpv --player-args "--gpu-context=wayland --ontop" https://twitch.tv/%s best > /dev/null 2>&1 &`, name)
+
+	browserToken := os.Getenv("BROWSER_AUTH_TOKEN")
+
+	if browserToken != "" {
+		command = fmt.Sprintf(`streamlink "--twitch-api-header=Authorization=OAuth %s" -p mpv --player-args "--gpu-context=wayland --ontop"  https://twitch.tv/%s best > /dev/null 2>&1 &`, browserToken, name)
+	}
+
+	cmd := exec.Command("bash", "-c", command)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Start()
@@ -95,7 +101,7 @@ func promptForChat(name string) {
 	}
 }
 
-func initialModel(items []list.Item) model {
+func initModel(items []list.Item) model {
 	l := list.New(items, list.NewDefaultDelegate(), 0, 0)
 	l.Title = "Live Twitch Streamers"
 	return model{list: l}
@@ -156,6 +162,7 @@ func (m model) View() string {
 	}
 	return m.list.View()
 }
+
 func main() {
 
 	err := godotenv.Load()
@@ -176,8 +183,8 @@ func main() {
 		os.Exit(0)
 	}
 
-	p := tea.NewProgram(initialModel(items))
-	if err := p.Start(); err != nil {
+	p := tea.NewProgram(initModel(items))
+	if _, err := p.Run(); err != nil {
 		fmt.Println("error running program:", err)
 		os.Exit(1)
 	}
