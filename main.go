@@ -72,12 +72,12 @@ func getLiveFollowed(clientID, userAccessToken string, userID string) []list.Ite
 }
 
 func launchStream(name string) {
-	command := fmt.Sprintf(`streamlink --twitch-disable-ads -p mpv --player-args "--gpu-context=wayland --ontop" https://twitch.tv/%s best > /dev/null 2>&1 &`, name)
+	command := fmt.Sprintf(`streamlink --twitch-low-latency --twitch-disable-ads -p mpv --player-args "--gpu-context=wayland --ontop" https://twitch.tv/%s best > /dev/null 2>&1 &`, name)
 
 	browserToken := os.Getenv("BROWSER_AUTH_TOKEN")
 
 	if browserToken != "" {
-		command = fmt.Sprintf(`streamlink "--twitch-api-header=Authorization=OAuth %s" -p mpv --player-args "--gpu-context=wayland --ontop"  https://twitch.tv/%s best > /dev/null 2>&1 &`, browserToken, name)
+		command = fmt.Sprintf(`streamlink --twitch-low-latency "--twitch-api-header=Authorization=OAuth %s" -p mpv --player-args "--gpu-context=wayland --ontop"  https://twitch.tv/%s best > /dev/null 2>&1 &`, browserToken, name)
 	}
 
 	cmd := exec.Command("bash", "-c", command)
