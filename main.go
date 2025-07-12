@@ -13,11 +13,12 @@ import (
 )
 
 type streamer struct {
-	name string
+	name    string
+	content string
 }
 
 func (s streamer) Title() string       { return s.name }
-func (s streamer) Description() string { return "Live on Twitch" }
+func (s streamer) Description() string { return s.content }
 func (s streamer) FilterValue() string { return s.name }
 
 type model struct {
@@ -35,21 +36,6 @@ const (
 	modeBoth
 )
 
-// func getAccessToken(clientID, clientSecret string) string {
-// 	client, err := helix.NewClient(&helix.Options{
-// 		ClientID:     clientID,
-// 		ClientSecret: clientSecret,
-// 	})
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	resp, err := client.RequestAppAccessToken([]string{"user:read:follows"})
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	return resp.Data.AccessToken
-// }
-
 func getLiveFollowed(clientID, userAccessToken string, userID string) []list.Item {
 	client, _ := helix.NewClient(&helix.Options{
 		ClientID:        clientID,
@@ -66,7 +52,7 @@ func getLiveFollowed(clientID, userAccessToken string, userID string) []list.Ite
 
 	items := []list.Item{}
 	for _, stream := range resp.Data.Streams {
-		items = append(items, streamer{name: stream.UserName})
+		items = append(items, streamer{name: stream.UserName, content: stream.GameName})
 	}
 	return items
 }
@@ -171,11 +157,9 @@ func main() {
 	}
 
 	clientID := os.Getenv("CLIENT_ID")
-	// clientSecret := os.Getenv("CLIENT_SECRET")
 	userID := os.Getenv("USER_ID")
 	userAccessToken := os.Getenv("USER_ACCESS_TOKEN")
 
-	// token := getAccessToken(clientID, clientSecret)
 	items := getLiveFollowed(clientID, userAccessToken, userID)
 
 	if len(items) == 0 {
