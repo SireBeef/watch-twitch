@@ -79,8 +79,6 @@ func promptForChat(name string) {
 	cmd := exec.Command("bash", "-c",
 		fmt.Sprintf(`chatterino -c %s 2>&1 &`, name),
 	)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
 	err := cmd.Start()
 	if err != nil {
 		fmt.Println("Failed to open Chatterino:", err)
