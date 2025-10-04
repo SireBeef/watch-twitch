@@ -23,3 +23,9 @@ BROWSER_AUTH_TOKEN -- Used for watching authenticated video feed.  Used to skip 
 CLIENT_ID -- client ID of twitch dev app
 CLIENT_SECRET -- client secret of twitch dev app
 
+## Notes
+
+Occasionally the USER_ACCESS_TOKEN will expire.  To get a new one navigate to:
+
+https://id.twitch.tv/oauth2/authorize?client_id=8atkdavwtqfm166hvwssc448vfaen2&redirect_uri=https://localhost:8080&response_type=token&scope=user:read:follows
+then copy the token from the URL after the redirect takes place.
