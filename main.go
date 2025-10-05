@@ -12,15 +12,12 @@ import (
 )
 
 func main() {
-	// Load configuration
 	cfg := config.Load()
 
-	// Initialize services with dependency injection
 	twitchService := services.NewTwitchService(cfg.ClientID, cfg.UserAccessToken, cfg.UserID)
 	streamLauncher := launcher.NewStreamLauncher(cfg.BrowserToken)
 	chatLauncher := launcher.NewChatLauncher()
 
-	// Get live followed streamers
 	items := twitchService.GetLiveFollowed()
 
 	if len(items) == 0 {
@@ -28,10 +25,8 @@ func main() {
 		os.Exit(0)
 	}
 
-	// Initialize TUI with injected dependencies
 	model := tui.NewModel(items, streamLauncher, chatLauncher)
 
-	// Run the program
 	p := tea.NewProgram(model)
 	if _, err := p.Run(); err != nil {
 		fmt.Println("error running program:", err)

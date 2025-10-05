@@ -9,16 +9,14 @@ import (
 	"watch-twitch/internal/models"
 )
 
-// Model represents the TUI state
 type Model struct {
 	list           list.Model
-	promptActive   bool
+	showingPrompt  bool
 	selected       models.Streamer
 	streamLauncher *launcher.StreamLauncher
 	chatLauncher   *launcher.ChatLauncher
 }
 
-// NewModel creates a new TUI model
 func NewModel(items []list.Item, streamLauncher *launcher.StreamLauncher, chatLauncher *launcher.ChatLauncher) Model {
 	l := list.New(items, list.NewDefaultDelegate(), 0, 0)
 	l.Title = "Live Twitch Streamers"
@@ -37,27 +35,26 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
-			if m.promptActive {
-				// Already prompting, do nothing
+			if m.showingPrompt {
 				return m, nil
 			}
 			item := m.list.SelectedItem().(models.Streamer)
 			m.selected = item
-			m.promptActive = true
+			m.showingPrompt = true
 			return m, nil
 
 		case "1":
-			if m.promptActive {
+			if m.showingPrompt {
 				m.streamLauncher.Launch(m.selected.Name)
 				return m, tea.Quit
 			}
 		case "2":
-			if m.promptActive {
+			if m.showingPrompt {
 				m.chatLauncher.Launch(m.selected.Name)
 				return m, tea.Quit
 			}
 		case "3":
-			if m.promptActive {
+			if m.showingPrompt {
 				m.streamLauncher.Launch(m.selected.Name)
 				m.chatLauncher.Launch(m.selected.Name)
 				return m, tea.Quit
@@ -76,7 +73,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	if m.promptActive {
+	if m.showingPrompt {
 		return fmt.Sprintf(
 			"What do you want to launch for %s?\n[1] Stream\n[2] Chat\n[3] Both\n\nPress 1, 2, or 3...",
 			m.selected.Name,

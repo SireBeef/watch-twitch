@@ -6,7 +6,6 @@ import (
 	"os/exec"
 )
 
-// StreamLauncher handles launching stream playback
 type StreamLauncher struct {
 	browserToken string
 }
@@ -17,7 +16,6 @@ func NewStreamLauncher(browserToken string) *StreamLauncher {
 	}
 }
 
-// Launch launches the stream for the given streamer name
 func (sl *StreamLauncher) Launch(name string) {
 	command := fmt.Sprintf(`streamlink --twitch-low-latency --twitch-disable-ads -p mpv --player-args "--gpu-context=wayland --ontop" https://twitch.tv/%s best > /dev/null 2>&1 &`, name)
 
@@ -34,14 +32,12 @@ func (sl *StreamLauncher) Launch(name string) {
 	}
 }
 
-// ChatLauncher handles launching chat windows
 type ChatLauncher struct{}
 
 func NewChatLauncher() *ChatLauncher {
 	return &ChatLauncher{}
 }
 
-// Launch launches the chat for the given streamer name
 func (cl *ChatLauncher) Launch(name string) {
 	cmd := exec.Command("bash", "-c",
 		fmt.Sprintf(`chatterino -c %s 2>&1 &`, name),

@@ -7,7 +7,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// Config holds application configuration
 type Config struct {
 	ClientID        string
 	UserID          string
@@ -15,7 +14,6 @@ type Config struct {
 	BrowserToken    string
 }
 
-// Load loads configuration from environment variables
 func Load() *Config {
 	err := godotenv.Load()
 	if err != nil {

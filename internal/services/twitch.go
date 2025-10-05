@@ -8,7 +8,6 @@ import (
 	"watch-twitch/internal/models"
 )
 
-// TwitchService handles interactions with the Twitch API
 type TwitchService struct {
 	clientID        string
 	userAccessToken string
@@ -39,7 +38,7 @@ func (ts *TwitchService) GetLiveFollowed() []list.Item {
 
 	items := []list.Item{}
 	for _, stream := range resp.Data.Streams {
-		items = append(items, models.Streamer{Name: stream.UserName, Content: stream.GameName})
+		items = append(items, models.Streamer{Name: stream.UserName, Game: stream.GameName})
 	}
 	return items
 }
